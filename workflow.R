@@ -37,3 +37,4 @@ for (i in 1:nrow(abbey_road_songs)){
 
 hist(all_songs$danceability)
 plot(all_songs$danceability, all_songs$energy)
+

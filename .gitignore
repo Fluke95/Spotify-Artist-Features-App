@@ -42,3 +42,6 @@ vignettes/*.pdf
 TODOs.txt
 credentials.csv
 *.Rproj
+
+google-analytics.html
+rsconnect/

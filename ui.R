@@ -49,7 +49,7 @@ shinydashboardPlus::dashboardPagePlus(
   ),
   shinydashboard::dashboardBody(
     shinyjs::useShinyjs(),
-    # tags$head(includeHTML(("google-analytics.html"))),
+    tags$head(includeHTML(("google-analytics.html"))),
     shinydashboard::tabItems(
       shinydashboard::tabItem(
         tabName = "TABLE",
