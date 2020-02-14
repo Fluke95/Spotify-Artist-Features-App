@@ -1,6 +1,5 @@
 # libraries
-library(spotifyr)
-library(dplyr)
+# shiny
 library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
@@ -10,21 +9,16 @@ library(shinythemes)
 library(shinyjs)
 library(shinyWidgets)
 library(shinycssloaders)
+# other
+library(spotifyr)
+library(dplyr)
+library(DT)
+library(ggplot2)
+library(plotly)
 
-# library(shiny)
-# library(shinythemes)
-# library(shinyjs)
-# library(shinyWidgets)
-# library(shinycssloaders)
-# library(DT)
-# library(glue)
-# library(dplyr)
-# library(ggplot2)
-# library(foreach)
-# library(doParallel)
-# library(scales)
-# library(lubridate)
-# library(shinydashboard)
-# library(shinycustomloader)
-# library(shinydashboardPlus)
-# library(plotly)
+# credentials
+credentials <- read.csv("credentials.csv")
+access_token <- get_spotify_access_token(
+  client_id = as.character(credentials$SPOTIFY_CLIENT_ID[1]),
+  client_secret = as.character(credentials$SPOTIFY_CLIENT_SECRET[1])
+)
