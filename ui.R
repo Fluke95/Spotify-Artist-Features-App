@@ -36,6 +36,8 @@ shinydashboardPlus::dashboardPagePlus(
           'create' = TRUE,
           'persist' = FALSE)
       ),
+      
+      actionButton(inputId = "go_button", "Go!"),
       # ........................................................................
       # plots panel                                                         ----
       shinydashboard::menuItem(
@@ -106,13 +108,13 @@ shinydashboardPlus::dashboardPagePlus(
       shinydashboard::tabItem(
         tabName = "TABLE",
         fluidRow(
-          # shinydashboardPlus::gradientBox(
-          #   DT::dataTableOutput("tabelePokaz"),
-          #   title = "Table",
-          #   width = 12,
-          #   icon = "fa fa-th",
-          #   boxToolSize = "md"
-          # )
+          shinydashboardPlus::gradientBox(
+            DT::dataTableOutput("rawStatsTable"),
+            title = "Table",
+            width = 12,
+            icon = "fa fa-line-chart",
+            boxToolSize = "md"
+          )
         )
       )
     )

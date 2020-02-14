@@ -16,6 +16,8 @@ library(DT)
 library(ggplot2)
 library(plotly)
 
+source("functions.R")
+
 # credentials
 credentials <- read.csv("credentials.csv")
 access_token <- get_spotify_access_token(
