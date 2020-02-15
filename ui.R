@@ -25,7 +25,7 @@ shinydashboardPlus::dashboardPagePlus(
       ),
       # add selected artists for analysis
       actionButton(inputId = "AddArtist_button", 
-                   label = "Add Artist"),
+                   label = "Add Artist(s)"),
       selectizeInput(
         inputId = "selectedArtistsInput",
         label = "Selected artists",
@@ -47,7 +47,7 @@ shinydashboardPlus::dashboardPagePlus(
       ),
       hidden(
         div(
-          id = "plot_customization",
+          id = "plot_customization"#,
           # shinyWidgets::pickerInput(
           #   inputId = "",
           #   label = "",
@@ -58,7 +58,7 @@ shinydashboardPlus::dashboardPagePlus(
           #     `liveSearch`  = TRUE,
           #     liveSearchPlaceholder = "")
           # ),
-          actionButton(inputId = "showPlots_button", "Show Plots")
+          # actionButton(inputId = "showPlots_button", "Show Plots")
         )
       ),
       # ........................................................................
@@ -70,8 +70,8 @@ shinydashboardPlus::dashboardPagePlus(
       ),
       hidden(
         div(
-          id = "table_customization",
-          actionButton(inputId = "showTable_button", "Show Table")
+          id = "table_customization"#,
+          # actionButton(inputId = "showTable_button", "Show Table")
         )
       )
     )
@@ -86,18 +86,14 @@ shinydashboardPlus::dashboardPagePlus(
         tabName = "PLOT",
         fluidRow(
           shinydashboardPlus::gradientBox(
-            # plotlyOutput(
-            #   "wykresPokaz") %>% 
-            #   shinycustomloader::withLoader(type = "image", loader = "hourglass.gif"),
+            plotlyOutput("scatter_plot"),
             title = "Scatter",
             width = 12,
             icon = "fa fa-line-chart",
             boxToolSize = "md"
           ),
           shinydashboardPlus::gradientBox(
-            # plotlyOutput(
-            #   "wykresPokaz") %>% 
-            #   shinycustomloader::withLoader(type = "image", loader = "hourglass.gif"),
+            plotlyOutput("density_plot"),
             title = "Density",
             width = 12,
             icon = "fa fa-line-chart",

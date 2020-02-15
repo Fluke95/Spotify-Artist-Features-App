@@ -1,3 +1,5 @@
+##  ............................................................................
+##  get_artists_album_tracks                                                 ####
 get_artists_album_tracks <- function(artist_id){
   
   require(dplyr)
@@ -6,8 +8,8 @@ get_artists_album_tracks <- function(artist_id){
   # step 2 - multiple selector: albums
   albums <- spotifyr::get_artist_albums(id = artist_id,
                                         include_groups = "album",
-                                        authorization=access_token) %>% 
-    dplyr::select(id, name)
+                                        authorization=access_token)# %>% 
+    # dplyr::select(id, name)
   
   all_artist_tracks <- data.frame()
   for (album in 1:nrow(albums)){
@@ -23,6 +25,8 @@ get_artists_album_tracks <- function(artist_id){
   return(all_artist_tracks)
 }
 
+##  ............................................................................
+##  get_track_features                                                       ####
 get_track_features <- function(tracks_df){
   
   require(dplyr)
