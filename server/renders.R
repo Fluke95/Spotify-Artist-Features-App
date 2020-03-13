@@ -14,7 +14,9 @@ output$scatter_plot <- renderPlotly({
   data <- fetch_tracks()
   
   p <- ggplot(data = data,
-              aes(x = valence, y = energy, color=artist_name, label=name, label2=album_name)) +
+              aes(x = !!as.name(input$scatter_horizontal),
+                  y = !!as.name(input$scatter_vertical),
+                  color=artist_name, label=name, label2=album_name)) +
     geom_jitter() +
     geom_vline(xintercept = 0.5) +
     geom_hline(yintercept = 0.5) +
@@ -39,14 +41,16 @@ output$density_plot <- renderPlotly({
   
   data <- fetch_tracks()
   
-  p <- ggplot(data, aes(x=danceability, fill=artist_name)) +
+  p <- ggplot(data, aes(x=!!as.name(input$density_horizontal),
+                        fill=artist_name)) +
     geom_density(alpha=0.4)
   ggplotly(p)
 })
 
 ##  ............................................................................
 ##  get_track_features                                                       ####
-output$rawStatsTable <- DT::renderDataTable({
+# output$rawStatsTable <- DT::renderDataTable({
+output$rawStatsTable <- reactable::renderReactable({
   
   req(input$go_button)
   
@@ -61,16 +65,6 @@ output$rawStatsTable <- DT::renderDataTable({
   
   data %>% 
     dplyr::select(-id, -album_id, -artist_id) %>% 
-    DT::datatable(
-      # colnames = c("),
-      extensions = 'Buttons',
-      options = list(
-        pageLength = 20,
-        lengthMenu = c(10, 20, 50, 100, nrow(data)),
-        dom = "Blftipr",
-        scrollX = TRUE,
-        buttons = c('csv', 'excel')),
-      rownames = FALSE,
-      class = "cell-border") 
+    reactable::reactable() 
   
 })

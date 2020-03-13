@@ -1,17 +1,18 @@
 ##  ............................................................................
 ##  Showing / Hiding tab items                                               ####
-observeEvent(input$sidebar_menu, {
+observeEvent(input$controlbar, {
   
-  if(input$sidebar_menu == "PLOT"){
+  if(input$controlbar == "PLOT"){
     shinyjs::toggle("plot_customization")
+    print("x")
   } else {
     shinyjs::hide("plot_customization")
   }
   
-  if(input$sidebar_menu == "TABLE"){
-    shinyjs::toggle("table_customization")
+  if(input$controlbar == "TABLE"){
+    shinyjs::toggle("right")
   } else {
-    shinyjs::hide("table_customization")
+    shinyjs::hide("right")
   }
   
 })
@@ -104,12 +105,12 @@ artists_ids_names <- eventReactive(input$go_button, {
     current_artist <- spotifyr::get_artist(
       id = artist_input[i],
       authorization=access_token)
-      
+    
     current_artist_df <- data.frame(
       artist_id = current_artist$id,
       artist_name = current_artist$name
     )
-  
+    
     ids_names <- rbind(ids_names, current_artist_df)
   }
   ids_names
@@ -161,6 +162,17 @@ observeEvent(input$help_button, {
       "
     )),
     html = TRUE,
-    type = "info"
+    type = "info",
+    btn_labels = "OK"
   )
+})
+
+##  ............................................................................
+##  notification on 'Go' button                                              ####
+observeEvent(input$go_button, {
+  
+  toastr_info(message = "Your Request is on its way",
+              title = "Please wait, it may take a while...",
+              newestOnTop = TRUE,
+              position = "bottom-center")
 })

@@ -10,19 +10,10 @@ bs4DashPage(
   navbar = bs4DashNavbar(
     status = "gray-light",
     skin = "dark",
-    fixed = TRUE#,
-    # rightUi = tagList(
-    #   bs4UserMenu(
-    #     name = "Divad Nojnarg", 
-    #     status = "primary",
-    #     # src = "https://adminlte.io/themes/AdminLTE/dist/img/user2-160x160.jpg", 
-    #     src = NULL,
-    #     title = "What's new",
-    #     subtitle = "Author", 
-    #     footer = p("The footer", class = "text-center"),
-    #     "Updates"
-    #   )
-    # )
+    fixed = TRUE,
+    rightUi = tagList(
+      actionLink("help_button", "Help", icon = icon("info"))
+    )
   ),
   # ............................................................................
   # sidebar --------------------------------------------------------------------
@@ -31,7 +22,7 @@ bs4DashPage(
     skin = "dark",
     status = "olive",
     title = h4(id="h4-main-title", "Spotify Artist Features"),
-    tags$style(HTML("#h4-main-title{color: mediumseagreen;}")),
+    tags$style(HTML("#h4-main-title{color: mediumseagreen; font-style:italic;}")),
     brandColor = NULL,
     # src = "https://adminlte.io/themes/AdminLTE/dist/img/user2-160x160.jpg",
     src = NULL,
@@ -42,27 +33,15 @@ bs4DashPage(
       flat = FALSE,
       compact = TRUE,
       child_indent = FALSE,
-      # bs4SidebarHeader("Cards"),
-      bs4SidebarMenuItem(
-        selectizeInput(
-          inputId = "artistsInput",
-          label = "Select artists",
-          choices = " ",
-          multiple = TRUE,
-        ),
-        text = "Galleries",
-        icon = "cubes",
-        startExpanded = FALSE
-      ),
       bs4SidebarMenuItem(
         "Visualization",
         tabName = "PLOT",
-        icon = "sliders"
+        icon = "chart-bar"
       ),
       bs4SidebarMenuItem(
         "Table",
         tabName = "TABLE",
-        icon = "suitcase"
+        icon = "table"
       )
     )
   ),
@@ -72,32 +51,41 @@ bs4DashPage(
     inputId = "controlbar",
     expand_on_hover = TRUE,
     skin = "dark",
-    title = "My right sidebar",
+    # title = "My right sidebar",
     width = 300,
-    setSliderColor(sliderId = 1, "black"),
-    sliderInput(
-      inputId = "obs", 
-      label = "Number of observations:",
-      min = 0, 
-      max = 1000, 
-      value = 500
+    # search for artists
+    textInput(
+      inputId = "searchArtistInput",
+      label = "Search for artists",
+      placeholder = "for example: Nickelback"
     ),
-    column(
-      width = 12,
-      align = "center",
-      radioButtons(
-        inputId = "dist", 
-        label = "Distribution type:",
-        c("Normal" = "norm",
-          "Uniform" = "unif",
-          "Log-normal" = "lnorm",
-          "Exponential" = "exp")
-      )
-    )
+    # pick an artist
+    selectizeInput(
+      inputId = "artistsInput",
+      label = "Select artists",
+      choices = " ",
+      multiple = TRUE,
+    ),
+    # add selected artists for analysis
+    actionButton(inputId = "AddArtist_button", 
+                 label = "Add Artist(s)"),
+    selectizeInput(
+      inputId = "selectedArtistsInput",
+      label = "Selected artists",
+      choices = " ",
+      multiple = TRUE,
+      options = list(
+        'plugins' = list('remove_button'),
+        'create' = TRUE,
+        'persist' = FALSE)
+    ),
+    actionButton(inputId = "go_button", "Let's Go!")
   ),
   # ............................................................................
   # body -----------------------------------------------------------------------
   body = bs4DashBody(
+    tags$head(includeHTML(("google-analytics.html"))),
+    useToastr(),
     bs4TabItems(
       #  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
       # visualization ----------------------------------------------------------
@@ -105,46 +93,59 @@ bs4DashPage(
         tabName = "PLOT",
         fluidRow(
           bs4Card(
-            title = "Closable card with dropdown", 
+            title = "Scatter", 
             closable = FALSE, 
             elevation = 4,
-            width = 6,
-            status = "warning", 
+            width = 12,
+            icon = "fa fa-line-chart",
+            status = "success",
             solidHeader = FALSE, 
             maximizable = TRUE, 
             collapsible = TRUE,
-            dropdownMenu = dropdownItemList(
-              dropdownItem(url = "https://www.google.com", name = "Link to google"),
-              dropdownItem(url = "#", name = "item 2"),
-              dropdownDivider(),
-              dropdownItem(url = "#", name = "item 3")
+            # dropdownMenu = dropdownItemList(
+            #   dropdownItem(url = "https://www.google.com", name = "Link to google"),
+            #   dropdownItem(url = "#", name = "item 2"),
+            #   dropdownDivider(),
+            #   dropdownItem(url = "#", name = "item 3")
+            # ),
+            shinyWidgets::dropdownButton(
+              tags$h3("Choose axes labels"),
+              selectInput(inputId = 'scatter_horizontal',
+                          label = 'Horizontal Axis',
+                          choices = plot_choices,
+                          selected = "valence"),
+              selectInput(inputId = 'scatter_vertical',
+                          label = 'Vertical Axis',
+                          choices = plot_choices,
+                          selected = "energy"),
+              circle = TRUE,
+              status = "warning",
+              icon = icon("gear"),
+              width = "300px"
             ),
-            plotOutput("plot")
+            plotly::plotlyOutput("scatter_plot")
           ),
           bs4Card(
-            title = "Closable card with dropdown", 
+            title = "Density", 
             closable = FALSE, 
             elevation = 4,
-            width = 6,
-            status = "warning", 
+            width = 12,
+            status = "success", 
             solidHeader = FALSE, 
             maximizable = TRUE, 
             collapsible = TRUE,
-            # labelStatus = NULL,
-            # labelText = NULL,
-            # labelTooltip = NULL,
-            bs4Ribbon(
-              text = "Plot 2",
-              status = "danger",
-              size = "xl"
+            shinyWidgets::dropdownButton(
+              tags$h3("Choose Feature"),
+              selectInput(inputId = 'density_horizontal',
+                          label = ' ',
+                          choices = plot_choices,
+                          selected = "valence"),
+              circle = TRUE,
+              status = "primary",
+              icon = icon("gear"),
+              width = "300px"
             ),
-            dropdownMenu = dropdownItemList(
-              dropdownItem(url = "https://www.google.com", name = "Link to google"),
-              dropdownItem(url = "#", name = "item 2"),
-              dropdownDivider(),
-              dropdownItem(url = "#", name = "item 3")
-            ),
-            plotOutput("plot")
+            plotly::plotlyOutput("density_plot")
           )
         )
       ),
@@ -152,27 +153,20 @@ bs4DashPage(
       # table ------------------------------------------------------------------
       bs4TabItem(
         tabName = "TABLE",
-        h4("Value Boxes"),
         fluidRow(
-          bs4ValueBox(
-            value = 150,
-            subtitle = "New orders",
-            status = "primary",
-            icon = "shopping-cart",
-            href = "#"
-          )
-        ),
-        h4("Info Boxes"),
-        fluidRow(
-          bs4InfoBox(
-            tabName = "cardsAPI",
-            title = "Navigate to Cards API section",
-            value = 1410,
-            icon = "laptop-code"
+          bs4Card(
+            # title = "Density", 
+            closable = FALSE, 
+            elevation = 4,
+            width = 12,
+            status = "success", 
+            solidHeader = FALSE, 
+            maximizable = TRUE, 
+            collapsible = TRUE,
+            reactable::reactableOutput("rawStatsTable") 
           )
         )
       )
-      ##
     )
   )
 )
