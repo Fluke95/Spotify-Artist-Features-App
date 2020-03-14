@@ -10,10 +10,9 @@ output$scatter_plot <- renderPlotly({
   
   req(fetch_tracks())
   
-  req(selected_artists())
-  req(input$searchArtistInput)
-  req(selected_artists_container())
-  req(input$selectedArtistsInput)
+  validate(
+    need(nrow(fetch_tracks()) > 0, "No data for provided artists")
+  )
   
   data <- fetch_tracks()
   data <- data %>% 
@@ -45,10 +44,9 @@ output$density_plot <- renderPlotly({
   
   req(fetch_tracks())
   
-  req(selected_artists())
-  req(input$searchArtistInput)
-  req(selected_artists_container())
-  req(input$selectedArtistsInput)
+  validate(
+    need(nrow(fetch_tracks()) > 0, "No data for provided artists")
+  )
   
   data <- fetch_tracks()
   data <- data %>% 
@@ -61,7 +59,6 @@ output$density_plot <- renderPlotly({
 
 ##  ............................................................................
 ##  get_track_features                                                       ####
-# output$rawStatsTable <- DT::renderDataTable({
 output$rawStatsTable <- reactable::renderReactable({
   
   req(input$go_button)
@@ -72,10 +69,9 @@ output$rawStatsTable <- reactable::renderReactable({
   
   req(fetch_tracks())
   
-  req(selected_artists())
-  req(input$searchArtistInput)
-  req(selected_artists_container())
-  req(input$selectedArtistsInput)
+  validate(
+    need(nrow(fetch_tracks()) > 0, "No data for provided artists")
+  )
   
   data <- fetch_tracks()
   data %>% 

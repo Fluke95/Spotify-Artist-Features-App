@@ -28,5 +28,3 @@ plot_choices <- c("danceability", "energy",
                   "speechiness", "acousticness",
                   "instrumentalness", "liveness",
                   "valence")
-
-# https://glin.github.io/reactable/articles/examples.html

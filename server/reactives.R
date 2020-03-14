@@ -59,10 +59,6 @@ observeEvent(input$reset_artists, {
   selected_artists_container(NULL)
   selected_artists_container <- reactiveVal(c())
   
-  req(selected_artists())
-  # req(input$searchArtistInput)
-  # req(selected_artists_container())
-  
   updateSelectizeInput(session,
                        "selectedArtistsInput",
                        choices = NULL,
@@ -116,8 +112,6 @@ observeEvent(input$AddArtist_button, {
 ##  artists names and id `dictionary`                                        ####
 artists_ids_names <- eventReactive(input$go_button, {
   
-  req(selected_artists())
-  req(input$searchArtistInput)
   req(input$selectedArtistsInput)
   
   validate(
@@ -147,9 +141,6 @@ artists_ids_names <- eventReactive(input$go_button, {
 ##  get all artists songs                                                    ####
 fetch_tracks <- eventReactive(input$go_button, {
   
-  req(selected_artists())
-  req(input$searchArtistInput)
-  req(input$selectedArtistsInput)
   req(artists_ids_names())
   
   artist_input <- input$selectedArtistsInput
@@ -157,24 +148,35 @@ fetch_tracks <- eventReactive(input$go_button, {
   
   albums <- data.frame()
   for (j in 1:length(artist_input)){
-    artist_songs <- get_artists_album_tracks(artist_input[j])
-    print(head(artist_songs))
-    albums <- rbind(albums, artist_songs)
+    
+    tryCatch({
+      artist_songs <- get_artists_album_tracks(artist_input[j])
+      albums <- rbind(albums, artist_songs)
+    }, error = function(e) {
+      artist_songs <- data.frame()
+      albums <- rbind(albums, artist_songs)
+    })
   }
   
-  all_songs <- get_track_features(albums) %>% 
-    dplyr::mutate(duration_ms = duration_ms / 1000) %>% 
-    dplyr::rename(duration_seconds = duration_ms)
-  merged <- dplyr::inner_join(albums, all_songs, by = c("id"))
-  
-  # merge with artist names
-  artists_ids_names <- artists_ids_names()
-  merged <- merged %>% 
-    dplyr::inner_join(artists_ids_names, by = c("artist_id")) %>% 
-    dplyr::select(artist_name, album_name, name, dplyr::everything(),
-                  -id, -album_id, -artist_id) %>% 
-    dplyr::distinct(artist_name, album_name, name, .keep_all = TRUE)
-  
+  if (nrow(albums > 0)){
+    
+    all_songs <- get_track_features(albums) %>% 
+      dplyr::mutate(duration_ms = duration_ms / 1000) %>% 
+      dplyr::rename(duration_seconds = duration_ms)
+    merged <- dplyr::inner_join(albums, all_songs, by = c("id"))
+    
+    # merge with artist names
+    artists_ids_names <- artists_ids_names()
+    merged <- merged %>% 
+      dplyr::inner_join(artists_ids_names, by = c("artist_id")) %>% 
+      dplyr::select(artist_name, album_name, name, dplyr::everything(),
+                    -id, -album_id, -artist_id) %>% 
+      dplyr::distinct(artist_name, album_name, name, .keep_all = TRUE)
+    
+    glimpse(merged)
+  } else {
+    merged <- data.frame()
+  }
   merged
 })
 

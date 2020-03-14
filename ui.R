@@ -24,7 +24,6 @@ bs4DashPage(
     title = h4(id="h4-main-title", "Spotify Artist Features"),
     tags$style(HTML("#h4-main-title{color: mediumseagreen; font-style:italic;}")),
     brandColor = NULL,
-    # src = "https://adminlte.io/themes/AdminLTE/dist/img/user2-160x160.jpg",
     src = NULL,
     elevation = 3,
     opacity = 0.8,
@@ -51,7 +50,6 @@ bs4DashPage(
     inputId = "controlbar",
     expand_on_hover = TRUE,
     skin = "dark",
-    # title = "My right sidebar",
     width = 300,
     # search for artists
     textInput(
@@ -119,12 +117,6 @@ bs4DashPage(
             solidHeader = FALSE, 
             maximizable = TRUE, 
             collapsible = TRUE,
-            # dropdownMenu = dropdownItemList(
-            #   dropdownItem(url = "https://www.google.com", name = "Link to google"),
-            #   dropdownItem(url = "#", name = "item 2"),
-            #   dropdownDivider(),
-            #   dropdownItem(url = "#", name = "item 3")
-            # ),
             shinyWidgets::dropdownButton(
               tags$h3("Choose axes labels"),
               selectInput(inputId = 'scatter_horizontal',
