@@ -56,30 +56,47 @@ bs4DashPage(
     # search for artists
     textInput(
       inputId = "searchArtistInput",
-      label = "Search for artists",
+      label = "Search for artist", 
       placeholder = "for example: Nickelback"
     ),
     # pick an artist
     selectizeInput(
       inputId = "artistsInput",
-      label = "Select artists",
+      label = "Select artist",
       choices = " ",
-      multiple = TRUE,
+      multiple = FALSE,
     ),
     # add selected artists for analysis
-    actionButton(inputId = "AddArtist_button", 
-                 label = "Add Artist(s)"),
+    shinyWidgets::actionBttn(
+      inputId = "AddArtist_button",
+      label = "Add Artist", 
+      style = "material-flat",
+      color = "primary",
+      icon = icon("plus-square")
+    ),
+    # remove them
+    shinyWidgets::actionBttn(
+      inputId = "reset_artists",
+      label = "Reset artists", 
+      style = "bordered",
+      color = "warning",
+      icon = icon("trash")
+    ),
+    # list of selected artists
     selectizeInput(
       inputId = "selectedArtistsInput",
       label = "Selected artists",
       choices = " ",
-      multiple = TRUE,
-      options = list(
-        'plugins' = list('remove_button'),
-        'create' = TRUE,
-        'persist' = FALSE)
+      multiple = TRUE
     ),
-    actionButton(inputId = "go_button", "Let's Go!")
+    # go button
+    shinyWidgets::actionBttn(
+      inputId = "go_button",
+      label = "Let's Go!", 
+      style = "material-flat",
+      color = "success",
+      icon = icon("play-circle")
+    )
   ),
   # ............................................................................
   # body -----------------------------------------------------------------------
@@ -93,7 +110,7 @@ bs4DashPage(
         tabName = "PLOT",
         fluidRow(
           bs4Card(
-            title = "Scatter", 
+            # title = "Scatter", 
             closable = FALSE, 
             elevation = 4,
             width = 12,
@@ -123,10 +140,13 @@ bs4DashPage(
               icon = icon("gear"),
               width = "300px"
             ),
-            plotly::plotlyOutput("scatter_plot")
+            shinycustomloader::withLoader(
+              plotly::plotlyOutput("scatter_plot"),
+              type="html",
+              loader="loader5")
           ),
           bs4Card(
-            title = "Density", 
+            # title = "Density", 
             closable = FALSE, 
             elevation = 4,
             width = 12,
@@ -145,7 +165,10 @@ bs4DashPage(
               icon = icon("gear"),
               width = "300px"
             ),
-            plotly::plotlyOutput("density_plot")
+            shinycustomloader::withLoader(
+              plotly::plotlyOutput("density_plot"),
+              type="html",
+              loader="loader5")
           )
         )
       ),
@@ -163,7 +186,10 @@ bs4DashPage(
             solidHeader = FALSE, 
             maximizable = TRUE, 
             collapsible = TRUE,
-            reactable::reactableOutput("rawStatsTable") 
+            shinycustomloader::withLoader(
+              reactable::reactableOutput("rawStatsTable"),
+              type="html",
+              loader="loader5")
           )
         )
       )

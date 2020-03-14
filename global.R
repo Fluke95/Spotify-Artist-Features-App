@@ -2,6 +2,8 @@
 require(shiny)
 require(shinyWidgets)
 require(shinytoastr)
+require(shinycustomloader)
+
 require(bs4Dash)
 require(plotly)
 require(echarts4r)
