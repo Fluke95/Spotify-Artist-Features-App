@@ -189,8 +189,13 @@ observeEvent(input$help_button, {
     title = "Need some help?",
     text = HTML(paste0(
       "
-      More detailed help may be found here in (not) so distant future.<br>
-      by now, look <a href='https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/'>here</a> for Spotify API Documentation
+      Add artists to compare in the right panel. You can add one artist at a time.<br>
+      Added artists are listed in <i>Selected Artists</i> field. You can reset this field by clicking <i>Reset artists</i>.<br>
+      Hit <b>Let's go!</b> when you're ready.<br>
+      <br>
+      For explanation of every variable, take a look <a href='https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/'>here</a> for Spotify official documentation.<br>
+      <br>
+      On the left panel there are 2 options: <i>Visualization</i> and <i>Table</i>. The former presents 2 plots, on which you can delve into track features like danceability or energy, broken down by artists. The latter is a table, with tracks grouped by artists and albums.
       "
     )),
     html = TRUE,
