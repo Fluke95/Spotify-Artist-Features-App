@@ -10,6 +10,17 @@ get_artists_album_tracks <- function(artist_id){
                                         include_groups = "album",
                                         authorization=access_token)
   
+  # albumsFilter <- albums %>% 
+  #   dplyr::group_by(name) %>% 
+  #   dplyr::summarise(total_tracks = max(total_tracks))
+  # 
+  # 
+  # albums <- dplyr::inner_join(albumsFilter,
+  #                    albums,
+  #                    by = c("name", "total_tracks")) %>% 
+  #   dplyr::select(name, total_tracks, id, release_date) %>% 
+  #   dplyr::arrange(release_date)
+  
   all_artist_tracks <- data.frame()
   for (album in 1:nrow(albums)){
     album_songs <- spotifyr::get_album_tracks(id=albums$id[album],

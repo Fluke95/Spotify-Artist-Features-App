@@ -1,19 +1,22 @@
 ##  ............................................................................
-##  Showing / Hiding tab items                                               ####
-observeEvent(input$sidebar_menu, {
-  
-  if(input$sidebar_menu == "PLOT"){
-    shinyjs::toggle("plot_customization")
-  } else {
-    shinyjs::hide("plot_customization")
-  }
-  
-  if(input$sidebar_menu == "TABLE"){
-    shinyjs::toggle("table_customization")
-  } else {
-    shinyjs::hide("table_customization")
-  }
-  
+##  Changing filter criteria                                                 ####
+results_searchFilter <- reactiveVal(FALSE, "Fill inputs")
+
+# observe events
+observeEvent(eventExpr   = c(input$searchArtistInput),
+             handlerExpr = c(results_searchFilter(TRUE)),
+             ignoreInit  = TRUE)
+
+observeEvent(eventExpr   = c(input$artistsInput),
+             handlerExpr = c(results_searchFilter(TRUE)),
+             ignoreInit  = TRUE)
+
+observeEvent(eventExpr   = c(input$selectedArtistsInput),
+             handlerExpr = c(results_searchFilter(TRUE)),
+             ignoreInit  = TRUE)
+
+observeEvent(input$go_button, {
+  results_searchFilter(FALSE)
 })
 
 ##  ............................................................................
@@ -43,12 +46,32 @@ observeEvent(input$searchArtistInput, {
                        "artistsInput",
                        choices = artists_selected_ids,
                        selected = artists_selected_ids[1])
+})
+
+##  ............................................................................
+##  selected artists - init & reset                                          ####
+# initialize selected artists
+selected_artists_container <- reactiveVal(c())
+
+# reset selected artists
+observeEvent(input$reset_artists, {
+  
+  selected_artists_container(NULL)
+  selected_artists_container <- reactiveVal(c())
+  
+  req(selected_artists())
+  # req(input$searchArtistInput)
+  # req(selected_artists_container())
+  
+  updateSelectizeInput(session,
+                       "selectedArtistsInput",
+                       choices = NULL,
+                       selected = "")
   
 })
 
 ##  ............................................................................
 ##  add selected artists                                                     ####
-selected_artists_container <- reactiveVal(c())
 observeEvent(input$AddArtist_button, {
   
   req(selected_artists())
@@ -75,6 +98,7 @@ observeEvent(input$AddArtist_button, {
   
 })
 
+###
 observeEvent(input$AddArtist_button, {
   
   req(selected_artists())
@@ -96,6 +120,10 @@ artists_ids_names <- eventReactive(input$go_button, {
   req(input$searchArtistInput)
   req(input$selectedArtistsInput)
   
+  validate(
+    need(length(input$selectedArtistsInput) > 0, "Select at least 1 artist.")
+  )
+  
   artist_input <- input$selectedArtistsInput
   
   ids_names <- data.frame()
@@ -104,12 +132,12 @@ artists_ids_names <- eventReactive(input$go_button, {
     current_artist <- spotifyr::get_artist(
       id = artist_input[i],
       authorization=access_token)
-      
+    
     current_artist_df <- data.frame(
       artist_id = current_artist$id,
       artist_name = current_artist$name
     )
-  
+    
     ids_names <- rbind(ids_names, current_artist_df)
   }
   ids_names
@@ -142,7 +170,10 @@ fetch_tracks <- eventReactive(input$go_button, {
   # merge with artist names
   artists_ids_names <- artists_ids_names()
   merged <- merged %>% 
-    dplyr::inner_join(artists_ids_names, by = c("artist_id"))
+    dplyr::inner_join(artists_ids_names, by = c("artist_id")) %>% 
+    dplyr::select(artist_name, album_name, name, dplyr::everything(),
+                  -id, -album_id, -artist_id) %>% 
+    dplyr::distinct(artist_name, album_name, name, .keep_all = TRUE)
   
   merged
 })
@@ -156,11 +187,22 @@ observeEvent(input$help_button, {
     title = "Need some help?",
     text = HTML(paste0(
       "
-      More detailed help may be found here in (not) so distant furue.<br>
+      More detailed help may be found here in (not) so distant future.<br>
       by now, look <a href='https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/'>here</a> for Spotify API Documentation
       "
     )),
     html = TRUE,
-    type = "info"
+    type = "info",
+    btn_labels = "OK"
   )
 })
+
+##  ............................................................................
+##  notification on 'Go' button                                              ####
+# observeEvent(input$go_button, {
+#   
+#   toastr_info(message = "Your Request is on the way",
+#               title = "Please wait, it may take a while...",
+#               newestOnTop = TRUE,
+#               position = "bottom-center")
+# })
