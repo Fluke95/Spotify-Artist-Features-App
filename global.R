@@ -1,20 +1,18 @@
-# libraries
-# shiny
-library(shiny)
-library(shinydashboard)
-library(shinydashboardPlus)
-library(shinycustomloader)
-library(shinydashboardPlus)
-library(shinythemes)
-library(shinyjs)
-library(shinyWidgets)
-library(shinycssloaders)
-# other
-library(spotifyr)
-library(dplyr)
-library(DT)
-library(ggplot2)
-library(plotly)
+# Load packages
+require(shiny)
+require(shinyWidgets)
+require(shinytoastr)
+require(shinycustomloader)
+
+require(bs4Dash)
+require(plotly)
+require(echarts4r)
+require(reactable)
+
+require(ggplot2)
+require(plotly)
+require(spotifyr)
+require(dplyr)
 
 source("functions.R")
 
@@ -24,3 +22,9 @@ access_token <- get_spotify_access_token(
   client_id = as.character(credentials$SPOTIFY_CLIENT_ID[1]),
   client_secret = as.character(credentials$SPOTIFY_CLIENT_SECRET[1])
 )
+
+# columns to choose from
+plot_choices <- c("danceability", "energy",
+                  "speechiness", "acousticness",
+                  "instrumentalness", "liveness",
+                  "valence")
